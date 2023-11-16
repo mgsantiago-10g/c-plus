@@ -1,7 +1,7 @@
 C+ Programming Language
 =======================
 
-C+ is a programming language for educational purposes. The ideas behind this project is to create a similar C language without low level facilities and minimalistic syntax with the power of strong/weak typing and high level abstraction mechanisms.
+C+ is a project of programming language for educational purposes. The ideas behind this project is to create a similar C language without low level facilities and minimalistic syntax with the power of strong/weak typing and high level abstraction mechanisms.
 
 Some objetives of this language are:   
 
@@ -21,9 +21,10 @@ Language technology
 This language works with a transpiler pair. Does not compile by its own bytecode.   
 The decisions behind this are:   
    
-a) Avoid virtual machine design and build compilers from scratch   
-b) Take the advantages of compiler optimization from well known languages (C)   
-c) Open the possibility by translate the language into any language.   
+a) Avoid virtual machine design and build compilers from scratch.   
+b) Take the advantages of compiler optimization from well known languages (C).   
+c) Open the possibility by translate the language into any language in the future.  
+d) More easy development for concrete results.   
 
 Primitive value types
 ---------------------
@@ -36,10 +37,10 @@ The following draft have the primitive type proposal with its possible C mapping
 **byte**   
 Minimal binary unit of data    
 size: 1 byte / 8 bits    
-C mapping: char / uint8    
+C mapping: uint8    
 
 **integer**, **uinteger**    
-Integer number with the largest range    
+Integer number with the largest range (signed/unsigned)   
 size: 8 bytes   
 C mapping: int64, uint64    
 
@@ -55,7 +56,7 @@ C mapping: int8
    
 **blob**   
 Dynamic binary array of bytes. Block of raw memory.   
-size:    
+size: N    
 C mapping: struct blob { size:integer, byte* }   
    
 **string**   
@@ -74,19 +75,28 @@ Primitive referenced types with parametrization
 Dynamic array of value-types.   
 Access: By integer index   
 C mapping: struct array { size: integer, type* }   
-   
+
 **map[k-type,v-type]**   
 Dynamic record of key-value pairs.   
 Access: By k-type index   
+
+**tree[k-type,v-type]**   
+Dynamic b-tree
+Access: By k-type index
    
 **struct**   
 Fixed record of symbol-value pairs.   
 Access: By symbol index   
 C mapping: classic packed struct   
+
+Predefined standard types
+--------------------------    
+
+**resource**
+External resources with predefined properties and interface   
    
-   
-Constraint types   
-----------------
+Constraint Auxiliar types   
+--------------------------
    
 **null**   
 Null value as type constraint that represents a holder for a value.   
@@ -113,7 +123,7 @@ Argument List conforms a anonymous struct, so arguments can be named and used in
    
 declaration:   
       
-function functionName = (type0 arg0, type1 arg1, ... typeN argN ) : TypeR   
+`**function** functionName = (**type0** arg0, **type1** arg1, ... , **typeN** argN ) : **TypeR**`
    
 execution:   
    
