@@ -35,38 +35,56 @@ Value-types are the representation of the data by itself while Referenced-Types 
 The following draft have the primitive type proposal with its possible C mapping implementation:   
 
 **byte**   
-Minimal binary unit of data    
-size: 1 byte / 8 bits    
-C mapping: uint8    
+Minimal binary unit of data (unsigned integer of 8bits) : 0 ... 256
+C mapping: uint8
+
+`byte example = 128`   
 
 **integer**, **uinteger**    
 Integer number with the largest range (signed/unsigned)   
 size: 8 bytes   
 C mapping: int64, uint64    
 
+`integer example = 900001`   
+
 **double**   
-Floatting comma number with the largest range   
+Long decimal number with floating point
 size: 8 bytes    
 C mapping: double    
+
+`double example = 45.9`     
+   
+**decimal**   
+Long decimal number with fixed point
+C mapping: C Compiler Extension
+
+`decimal example = 44.00D`
 
 **boolean**    
 Boolean value (True/False)   
 size: 1 byte   
 C mapping: int8   
+
+`boolean example = false`   
    
 **blob**   
 Dynamic binary array of bytes. Block of raw memory.   
 size: N    
 C mapping: struct blob { size:integer, byte* }   
+
+`blob example = [25,23,10,18,0,244,120]`
    
 **string**   
 Dynamic binary string   
 C mapping: struct string { size: integer, byte* }   
 [PHP String Design](https://www.php.net/manual/en/language.types.string.php#language.types.string.details)   
+
+`string example = 'Hello World'`
    
 **undefined**   
 Undefined value as type that represents a dynamic typed instance without type definition.   
-   
+
+
    
 Primitive referenced types with parametrization   
 -----------------------------------------------   
@@ -74,20 +92,24 @@ Primitive referenced types with parametrization
 **array[type]**   
 Dynamic array of value-types.   
 Access: By integer index   
-C mapping: struct array { size: integer, type* }   
+
+`array[string] example = ['Hello', 'World!'];
+out.write( example[1] );`   
 
 **map[k-type,v-type]**   
 Dynamic record of key-value pairs.   
 Access: By k-type index   
 
-**tree[k-type,v-type]**   
-Dynamic b-tree
-Access: By k-type index
-   
+`map[string,int] example = { 'id':2, 'name':'C+', 'description':'Programming Language' };
+out.write( example['id'] );`    
+
 **struct**   
 Fixed record of symbol-value pairs.   
 Access: By symbol index   
 C mapping: classic packed struct   
+
+`struct example = ( integer id, string name, string description );`
+out.write( example[id] );`
 
 Predefined standard types
 --------------------------    
@@ -117,7 +139,7 @@ struct null_value{ bool isNull; type value }
 Mechanism types   
 ---------------   
    
-**function** or **action** or **procedure**   
+**function**
 By definition function is a stateless action and action statefull. In this case, all functions have state.   
 Argument List conforms a anonymous struct, so arguments can be named and used in interchangeable way.   
    
