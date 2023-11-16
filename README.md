@@ -34,57 +34,57 @@ Primitive value types
    
 In type theory, there are a lot of classifications of types. The most simple classification starts with value-types and referenced-types. Value-types are the representation of the data by itself while Referenced-Types holds a reference to a one/many Value-types. The following draft have the primitive type proposal especification:   
 
-**byte**   
+ - **byte**   
 Minimal binary unit of data (unsigned integer of 8bits) : 0 ... 256   
 `byte example = 128;`   
 
-**integer**, **uinteger**    
+ - **integer**, **uinteger**    
 Integer number with the largest range (signed/unsigned)   
 `integer example = 900001;`   
 
-**double**   
+ - **double**   
 Long decimal number with floating point
 `double example = 45.9;`     
    
-**decimal**   
+ - **decimal**   
 Long decimal number with fixed point
 `decimal example = 44.00D;`
 
-**boolean**    
+ - **boolean**    
 Boolean value (True/False)   
 `boolean example = false;`   
    
-**blob**   
+ - **blob**   
 Dynamic binary array of bytes.
 `blob example = []:`
 `blob example = [25,23,10,18,0,244,120];`
    
-**string**   
+ - **string**   
 Dynamic binary string without encoding like [PHP String Design](https://www.php.net/manual/en/language.types.string.php#language.types.string.details)   
 `string example = 'Hello World'`
     
 Primitive referenced types with parametrization   
 -----------------------------------------------   
- **array**
+ - **array**
 Dynamic typed array by accesed by integer index
 `array example = ['Hello', 1, 3.1416 ];`
 
-**array[type]**   
+ - **array[type]**   
 Strong typed array of value-types accesed by integer index
 `array[string] example = ['Hello', 'World!'];`
 `out.write( example[1] );`   
 
-**map**   
+ - **map**   
 Dynamic typed map of key-value pairs
 `map example = { 'id':2, 233:'C+','price':23.17 };`
 `out.write( example['id'] )`;
 
-**map[k-type,v-type]**   
+ - map[k-type,v-type]**   
 Strong typed map of key-value pairs
 `map[string,int] example = { 'id':2, 'name':'C+', 'description':'Programming Language' };
 out.write( example['id'] );`    
 
-**struct**   
+ - **struct**   
 Fixed record of symbol-value pairs.   
 Access: By symbol index   
 C mapping: classic packed struct   
@@ -92,12 +92,7 @@ C mapping: classic packed struct
 `struct example = ( integer id, string name, string description );`
 out.write( example[id] );`
 
-Predefined standard types
---------------------------    
 
-**resource**
-External resources with predefined properties and interface   
-   
 Constraint Auxiliar types   
 --------------------------
    
