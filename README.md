@@ -101,7 +101,7 @@ The parameter list works as a anonymous struct object.
  - With named arguments   
 `type result = functionName( arg0:1, arg1:'hello', ..., argN:valueN );`    
     
- - **method**
+ - **method**   
 Is a special function that have available 'this' keyword to be used inside who can be bindable objects.   
 `method name = className::(type0 arg0, type1 arg1, ... , typeN argN ) : type { ...code... }`  
 `type result = methodName[object]( arg0, arg1, ..., argN);    
