@@ -14,7 +14,8 @@ Some objetives of this language are:
  - Standarized mechanisms for serialization/deserialization of data structures. 
  - Have a minimal set of primitive types (value-types and referenced-types).
  - Consistent syntax in order to avoid programmers to write code in different ways to perform same behaviour.  
- - Clear policy of memory management and concurrency facilities.   
+ - Clear policy of memory management and concurrency facilities.
+ - No low-level facilities like pointers and keywords for memory manipulation.
   
 Language technology
 -------------------   
@@ -27,18 +28,17 @@ The decisions behind this are:
  - Open the possibility by translate the language into any language in the future.
  - More easy development for concrete results.
 
-   
 
-Primitive value types
+Primitive types
 ---------------------
    
-In type theory, there are a lot of classifications of types. The most simple classification starts with value-types and referenced-types. Value-types are the representation of the data by itself while Referenced-Types holds a reference to a one/many Value-types. The following draft have the primitive type proposal especification:   
+In type theory, there are a lot of classifications of types. The most simple classification starts with value-types and referenced-types. Value-types are the representation of the data by itself while Referenced-Types holds a reference to a one/many Value-types. The following draft have the primitive types proposal especifications:   
 
  - **byte**   
-Minimal binary unit of data (unsigned integer of 8bits) : 0 ... 256   
+Minimal binary unit of data (unsigned integer of 8 bits)  
 `byte example = 128;`   
 
- - **integer**, **uinteger**    
+ - **integer** 
 Integer number with the largest range (signed/unsigned)   
 `integer example = 900001;`   
 
@@ -46,113 +46,96 @@ Integer number with the largest range (signed/unsigned)
 Long decimal number with floating point
 `double example = 45.9;`     
    
- - **decimal**   
-Long decimal number with fixed point
-`decimal example = 44.00D;`
-
  - **boolean**    
 Boolean value (True/False)   
 `boolean example = false;`   
    
  - **blob**   
-Dynamic binary array of bytes.
-`blob example = []:`
+Dynamic binary array of bytes.   
+`blob example = []:`   
 `blob example = [25,23,10,18,0,244,120];`
    
  - **string**   
 Dynamic binary string without encoding like [PHP String Design](https://www.php.net/manual/en/language.types.string.php#language.types.string.details)   
-`string example = 'Hello World'`
+`string example = 'Hello World'`   
     
-Primitive referenced types with parametrization   
------------------------------------------------   
- - **array**
-Dynamic typed array by accesed by integer index
-`array example = ['Hello', 1, 3.1416 ];`
-
  - **array[type]**   
-Strong typed array of value-types accesed by integer index
-`array[string] example = ['Hello', 'World!'];`
-`out.write( example[1] );`   
+Strong typed array of value-types accesed by integer index   
+`array[string] example = ['Hello', 'World!'];`   
+`out.write( example[1] );`    
+  
+ - **map[k-type, v-type]**   
+Dynamic typed map of key-value pairs  
+`map[string,string] example = { 'id':'2', 'name':'C+','description':'Programming Language' };`  
+`out.write( example['id'] )`;   
 
- - **map**   
-Dynamic typed map of key-value pairs
-`map example = { 'id':2, 233:'C+','price':23.17 };`
-`out.write( example['id'] )`;
+Derived types
+----------------- 
 
- - map[k-type,v-type]**   
-Strong typed map of key-value pairs
-`map[string,int] example = { 'id':2, 'name':'C+', 'description':'Programming Language' };
-out.write( example['id'] );`    
-
- - **struct**   
-Fixed record of symbol-value pairs.   
-Access: By symbol index   
-C mapping: classic packed struct   
-
-`struct example = ( integer id, string name, string description );`
-out.write( example[id] );`
-
-
-Constraint Auxiliar types   
---------------------------
+ - **null**   
+Null is a constraint type that works with another type and can have only two possible values: 'null'  or a type-value.  
+`string|null name;`
    
-**null**   
-Null value as type constraint that represents a holder for a value.   
-If the holder is empty, the value is null, otherwise is the value itself.   
-Null is a characteristic not a type by itself.    
-In declarations, if null is used as constraint the pair type|null conforms the holder.   
-If initial value is not defined, null symbol is initialized by default.   
+Internally null constraint type, works as a holder. When the instance is declared without initialization the holder state is empty and the value is 'null'. Otherhand, if holder is not empty the inner value.
+    
+`string|null name = 'Hello World!';`    
+`name = null;`    
+`name = 'Nice';`   
    
-syntax:   
-   
-type|null name;   
-   
-c-representation:   
-struct null_value{ bool isNull; type value }      
-   
-//This is valid for value-types. For referenced types needs to be polymorphic like null-reference   
-   
+ - **struct *name***   
+Fixed record of type-symbol pairs.  
+`struct name example = ( integer id, string name, string|null description );`  
+`out.write( example[id] );`  
+    
 Mechanism types   
 ---------------   
    
-**function**
-By definition function is a stateless action and action statefull. In this case, all functions have state.   
-Argument List conforms a anonymous struct, so arguments can be named and used in interchangeable way.   
+ - **function**    
+By definition function is a stateless and functor is stateful. The functor is a generalization of functions, so is the default in C+   
+The parameter list works as a anonymous struct object.   
+`function functionName = (type0 arg0, type1 arg1, ... , typeN argN ) : type { ...code... }`  
    
-declaration:   
-      
-`**function** functionName = (**type0** arg0, **type1** arg1, ... , **typeN** argN ) : **TypeR**`
+ - With ordered arguments   
+`type result = functionName( 1, 'hello', 'world');`   
    
-execution:   
-   
-a) With ordered arguments   
-TypeR result = functionName( 1, 'hello', 'world');   
-   
-b) With named arguments   
-TypeR result = functionName( arg0:1, arg1:'hello', ..., argN:valueN );   
-   
-c) Callable interface   
-execute functionName with { arg0:1, arg1:'hello', ..., argN:valueN };   
+ - With named arguments   
+`type result = functionName( arg0:1, arg1:'hello', ..., argN:valueN );`    
+    
+ - **method**
+Is a special function that have available 'this' keyword to be used inside who can be bindable objects.   
+`method name = className::(type0 arg0, type1 arg1, ... , typeN argN ) : type { ...code... }`  
+`type result = methodName[object]( arg0, arg1, ..., argN);    
+    
+ - **class *name***    
+Is a map of key('string') with values(method)  
    
 Instance declarations   
 ---------------------   
    
-type instanceName = initialValue | defaultValue;   
-
-Static/Dynamic typing switch   
------------------------------
+Declarations works in all cases with 'type' signature at left side and 'rvalue' at right side.   
+Without presence of null constraint working with paired type, the initialization is required by type value literal representation in other case default is null.    
+    
+`type instanceName = 'type-value';`   
+`type|null instanceName;  //null is the default value`  
    
-**var**   
-This type is used as high level variant and represents all the primitive types including functions/object/prototypes   
-   
-declaration with undefined   
-   
-var name;   
-   
-declaration with null is invalid with static types but valid in dynamic-typing   
-var name = null;   
-   
-var name = 'hello';   
-name = 2;   
-name = 2.34;   
-
+Dynamic types   
+-----------------------------   
+     
+ - **var** or *undefined-type*  
+This type is the indicator of dynamic typed element. And it have three possible states: 'undefined', 'null', *type-value*, *type-reference*   
+Null constraint is not required to be defined. Ignoring type signature in function arguments is considered var.   
+    
+`var instance = 8;`  
+`instance = 'Hello';`   
+`instance = 123.4';`  
+`instance = null;`  
+`instance = undefined;`    
+    
+For functions:   
+`function functionName = (arg0,arg1, ... ,argN ):var`   
+`function functionName = (arg0,integer arg1, ... ,argN ):double`   
+    
+In this cases, the hidden type of return means 'undefined' in the case of no-return, or 'null'/'value' when return is utilized.   
+    
+`var example = functionName(1,2,3);`  
+`example? out.write('value is: ', example) : out.write('no value'); 
