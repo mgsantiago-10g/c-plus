@@ -76,11 +76,13 @@ Derived types
 Null is a constraint type that works with another type and can have only two possible values: 'null'  or a type-value.  
 `string|null name;`
    
-Internally null constraint type, works as a holder. When the instance is declared without initialization the holder state is empty and the value is 'null'. Otherhand, if holder is not empty the inner value.
+Internally null constraint type, works as a holder. When the instance is declared without initialization the holder state is empty and the value is 'null'. Otherhand, if holder is not empty returns the inner value.
     
 `string|null name = 'Hello World!';`    
 `name = null;`    
 `name = 'Nice';`   
+
+*string|null syntax is equivalent to Null<string> kind of classic parametrization. The | operator works as a type chaining composition. string|utf8|null for example works as Null<string<utf8>> if utf8 is defined as a constraint type*    
    
  - **struct *name***   
 Fixed record of type-symbol pairs.  
