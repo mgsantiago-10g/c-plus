@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="prism.css" type="text/css" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="normalize.css">
+  <title>C+ GUI Test Generator</title>
+</head>
+
+<style>
+
+*
+{
+	font-family: 'Arial';
+	font-size: 12px;
+}
+
+html
+{
+	margin: 0px;
+	padding: 0px;
+}
+
+body 
+{
+  display: grid; 
+  grid-template-columns: repeat(4, 1fr); 
+  grid-template-rows: repeat(4, 1fr); 
+  height: 100vh;
+}
+
+.declaration
+{ 
+	grid-area: 1 / 1 / 5 / 3; 
+	background-color: #d3dcde;
+	padding: 5px;
+}
+
+.mapping 
+{ 
+	grid-area: 1 / 3 / 5 / 5; 
+	background-color: #daf2f7;
+	padding: 5px;
+}
+
+</style>
+<body>
+
+</body>
+
+<script src="prism.js"></script>
+
+<script>
+
+function createElement( name, options = {}) 
+{
+  let element = undefined;
+
+  if ( name != null || name != undefined )
+  {
+    element = document.createElement(name);
+  }
+
+  for (const key in options)
+  {
+    if (options.hasOwnProperty(key)) 
+    {
+      if (key === 'textContent')
+      {
+        element.textContent = options[key];
+      }
+      else if ( key === 'innerText')
+      {
+        element.innerText = options[key];
+      }
+      else
+      {
+        element.setAttribute(key, options[key]);
+      }
+    }
+  }
+
+  return element;
+}
+
+//---------------------------
+let includes = ['stdio.h','memory.h','stdlib.h','stdint.h'];
+
+
+let predefinedTypesInC = [];
+
+predefinedTypesInC[0] = 'typedef struct blob { int64_t length; void* block; } blob;';
+predefinedTypesInC[1] = 'typedef struct string { int64_t length; char* block; } string;';
+
+
+let types = new Map();
+
+types.set('integer','int64');
+types.set('byte','char');
+types.set('double','double');
+types.set('boolean','int');
+types.set('blob','blob');
+types.set('string','string');
+
+
+//---------------------------
+
+function generateCCode()
+{
+	let headerIncludes = '';
+
+	for ( let include of includes )
+	{
+		headerIncludes += '#include <'+include+">\n";
+	}
+
+	let code = '';
+	code += headerIncludes;
+	code += '\n';
+
+	for ( let typedef of predefinedTypesInC )
+	{
+		code += typedef+'\n';
+	}
+
+	code += `
+int main()
+{
+	return 0;
+}`;
+
+	return code;
+}
+
+
+
+let headerLeft = createElement('h3', {innerText:'C+ Programming Language'});
+let headerRight = createElement('h3', {innerText:'Transpilation in C/C++'});
+
+let declarationSide = createElement('div',{class:'declaration'});
+let mappingSide = createElement('div',{class:'mapping'});
+
+let mappingCodeContainer = createElement('pre');
+let codeHighlightArea = createElement('code', {class:'language-cpp'});
+
+let transpilerButton = createElement('button', {innerText:'Refresh transpilation'});
+let executeButton = createElement('button',{innerText:'Execute'});
+
+executeButton.onclick = async () =>
+{
+	let encodedCodeURL = encodeURIComponent(generateCCode());
+	window.open('https://cpp.sh/?source='+encodedCodeURL,'_black');	
+}
+
+transpilerButton.onclick = () =>
+{
+	codeHighlightArea.textContent  = generateCCode();
+	Prism.highlightAll(codeHighlightArea);
+}
+
+
+
+
+async function main()
+{
+	mappingCodeContainer.appendChild(codeHighlightArea);
+	
+	declarationSide.appendChild(headerLeft);
+	declarationSide.appendChild(createElement('hr'));
+	declarationSide.appendChild(transpilerButton);
+	declarationSide.appendChild(createElement('hr'));
+
+	mappingSide.appendChild(headerRight);
+	mappingSide.appendChild(createElement('hr'));
+	mappingSide.appendChild(executeButton);
+	mappingSide.appendChild(createElement('hr'));
+	mappingSide.appendChild(mappingCodeContainer);
+
+	
+	document.body.appendChild(declarationSide);
+	document.body.appendChild(mappingSide);	
+}
+
+window.onload = main;
+
+</script>
+</html>
